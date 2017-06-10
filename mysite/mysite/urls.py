@@ -15,7 +15,12 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from posts import views as posts_views
+
+# Guide to django regex
+# https://github.com/codingforentrepreneurs/Guides/blob/master/all/common_url_regex.md
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^posts/$', posts_views.post_home),
 ]
