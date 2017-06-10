@@ -89,3 +89,34 @@ to apply changes
 python manage.py makemigrations
 python manage.py migrate
 ```
+
+## Custom admin and CRUD
+
+A model can be added (registered in Django gergon) to the admin panel.
+The vanilla version displays the returned ```__unicode__``` or ```__str__``` for the posts present in the database.
+It's good to have more info displayed in your admin panel i.e. the title and date of update and publish.
+Create a ModelAdmin by extending the ModelAdmin class and add few options for better search and organization.
+
+in ```DjangoDeployed/mysite/posts/admin.py```
+
+```
+from .models import Post
+
+# Register your models here.
+
+class PostModelAdmin(admin.ModelAdmin):
+    list_display = ['title','updated','timestamp']
+    list_display_links = ['title']
+    list_filter = ['updated','timestamp']
+    search_fields = ['title','content']
+    class Meta:
+        model = Post
+
+admin.site.register(Post, PostModelAdmin)
+```
+For more options visit the documentation:
+[ModelAdminOptions](https://docs.djangoproject.com/en/1.11/ref/contrib/admin/#modeladmin-options)
+
+### CRUD
+The Admin panel is an example of good software developement, the AdminModels follow [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete).
+
