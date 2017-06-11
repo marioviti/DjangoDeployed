@@ -6,16 +6,19 @@ from django.shortcuts import render
 # Create your views here.
 
 def post_home(req):
-    return HttpResponse("<h1>Hello</h1>")
+    return render(req,"index.html",{})
 
 def post_create(req):
     return HttpResponse("<h1>Create</h1>")
 
+def post_read(req):
+    return HttpResponse("<h1>Read</h1>")
+
 def post_update(req):
     return HttpResponse("<h1>Update</h1>")
 
-def post_remove(req):
-    return HttpResponse("<h1>Remove</h1>")
+def post_delete(req):
+    return HttpResponse("<h1>Delete</h1>")
 
-def post_display(req):
-    return HttpResponse("<h1>Display</h1>")
+def post_list(req):
+    return HttpResponse("<h1>List</h1>")

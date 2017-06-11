@@ -24,7 +24,8 @@ urlpatterns = [
     url(r'^$', views.post_home),
     #CRUD STUFF
     url(r'^create/$', views.post_create),
-    url(r'^remove/$', views.post_remove),
+    url(r'^read/$', views.post_read),
     url(r'^update/$', views.post_update),
-    url(r'^display/$', views.post_display),
+    url(r'^delete/$', views.post_delete),
+    url(r'^list/$', views.post_list),
 ]
