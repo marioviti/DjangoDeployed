@@ -62,6 +62,42 @@ creates an app within a folder named after the app (posts).
 
 First list it under the others to the INSTALLED_APPS dictionary in ```DjangoDeployed/mysite/mysite/settings.py```
 
+## Referr to the posts app with urls and views
+In ```DjangoDeployed/mysite/mysite/urls.py``` modify the urls 
+```
+from django.conf.urls import include, url
+from django.contrib import admin
+
+urlpatterns = [
+    url(r'^admin/', admin.site.urls),
+    url(r'^posts/', include('posts.urls')),
+]
+```
+firsr argument of url is a [regex](https://github.com/codingforentrepreneurs/Guides/blob/master/all/common_url_regex.md)
+
+This will raise an error, next create ```posts/urls.py```
+
+```
+from django.conf.urls import url
+from django.contrib import admin
+
+import views
+
+urlpatterns = [
+    url(r'^$', views.post_home),
+```
+This will raise an error, next define the post_home function in ```posts/views.py```
+
+##### The request response cycle.
+
+Websites mostly work as a pull server.
+For each request a response spawns, this mechanism is implemented in practice by the http protocol.
+In ```posts/views.py``` add:
+```
+def post_home(req):
+    return HttpResponse("<h1>Hello</h1>")
+```
+restart the server and goto <yourIP>/posts and a Hello will appear.
 ### the model
 
 A model is a class permitting django to create foramtted tables in the database: to create one modify posts/models.py
@@ -116,7 +152,138 @@ admin.site.register(Post, PostModelAdmin)
 ```
 For more options visit the documentation:
 [ModelAdminOptions](https://docs.djangoproject.com/en/1.11/ref/contrib/admin/#modeladmin-options)
-
 ### CRUD
 The Admin panel is an example of good software developement, the AdminModels follow [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete).
+##### URLS and Views
+Each CRUD task can be implemented within the req-resp cycle with the url-views system (actually CRUDL).
+
+in ```post/urls.py``` add the follwing patterns:
+```
+    url(r'^create/$', views.post_create),
+    url(r'^read/$', views.post_read),
+    url(r'^update/$', views.post_update),
+    url(r'^delete/$', views.post_delete),
+    url(r'^list/$', views.post_list),
+```
+
+in the  ```post/views.py ``` define the following functions:
+```
+def post_create(req):
+    return HttpResponse("<h1>Create</h1>")
+
+def post_read(req):
+    return HttpResponse("<h1>Read</h1>")
+
+def post_update(req):
+    return HttpResponse("<h1>Update</h1>")
+
+def post_delete(req):
+    return HttpResponse("<h1>Delete</h1>")
+
+def post_list(req):
+    return HttpResponse("<h1>List</h1>")
+```
+By now it's not doing anything but serving simple html but this is correct.
+
+## Templates
+
+to separate backend from frontend use templates:
+* save html/frontend code in ```DjangoDeployed/mysite/templates```
+* add ```DjangoDeployed/mysite/templates``` path to the ```DjangoDeployed/mysite/mysite/settings.py``` files
+    * add to the TEMPLATES dict
+    ```
+    TEMPLATES = { ...,
+    'DIRS': [os.path.join(BASE_DIR, 'templates')],
+    ...,}
+    ```
+    BASE_DIR aka root dir of the django project.
+* add a view response to test templates
+    * add to ```posts/views.py```:
+    ```
+    def post_home(req):
+        return render(req,"index.html",{})
+    ```
+    
+### HTML Hello World: the index.html template
+
+in templates directory create a file ```index.html```
+
+```
+<!-- DOCTYPE html -->
+<html>
+<body>
+  <h1>
+    Hello World
+  </h1>
+</body>
+</html>
+```
+this is referenced by the root url of the posts app aka <yourIP>/posts.
+
+### here commit 66ce07f81e6d85400c90b0271351010bbf6ce58d
+
+## Django Shell and Database API
+[DB_API_DOC](https://docs.djangoproject.com/en/1.11/topics/db/queries/)
+#### Cheat list for using the DB API
+* Access the shell and model:
+``` $ python manage.py shell```
+* Import the model
+``` >>> from posts.models import Post ```
+* CREATE objects
+```>>>Post.objects.create(title="new title", content="new content")``` create entry in database with defined content for specified fields (each command a query to the underlying database).
+* LIST all objects
+``` >>> Post.object.all() ```    returns a query set.
+* FILTER objects
+```>>> Post.object.filter(title="hi")``` return the matched field query set.
+```>>> Post.object.filter(title__icontains="hi")``` same query case insensitive.
+
+### use DB API in the req-resp cycle
+##### context in the backend
+Add a "context" to the request 
+```
+from models impor Post
+def post_list(req):
+    queryset = Post.objects.all()
+    context = { 'queryset' : queryset }
+    return render(req,"list.html",context)
+```
+this will raise an error upon request to the /list url because the list.html file has not been created yet.
+##### context in the frontend
+A queryset is an iterable object, each field is an attribute of the items:
+```
+    queryset = Post.objects.all()
+    for item in queryset:
+        print item.title
+        print item.content
+        print item.uploaded
+        print item.updated
+        print item.timestamp
+        print item.id
+        print item.pk # primary key field
+```
+The same pythonic syntax can be used (slightly) in html templates to list resutls coming from a request.
+Create a ```templates/list.html``` file:
+```
+<!-- DOCTYPE html -->
+
+<html>
+
+<body>
+{% for item in queryset %}
+  <h1>
+  {{ item.title }}<br/>
+  {{ item.content }}<br/>
+  {{ item.uploaded }}<br/>
+  {{ item.updated }}<br/>
+  {{ item.timestamp }}<br/>
+  {{ item.id }}<br/>
+  {{ item.pk }}<br/>
+  </h1>
+{% endfor %}
+</body>
+
+</html>
+```
+commit 6d662b837589b11649affd498cb0c357a361bccd
+
 
