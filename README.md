@@ -220,7 +220,7 @@ in templates directory create a file ```index.html```
 ```
 this is referenced by the root url of the posts app aka <yourIP>/posts.
 
-### here commit 66ce07f81e6d85400c90b0271351010bbf6ce58d
+#### commit 66ce07f81e6d85400c90b0271351010bbf6ce58d
 
 ## Django Shell and Database API
 [DB_API_DOC](https://docs.djangoproject.com/en/1.11/topics/db/queries/)
@@ -284,6 +284,6 @@ Create a ```templates/list.html``` file:
 
 </html>
 ```
-commit 6d662b837589b11649affd498cb0c357a361bccd
+#### commit 6d662b837589b11649affd498cb0c357a361bccd
 
 
