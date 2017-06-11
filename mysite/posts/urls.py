@@ -13,14 +13,18 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-
-from django.conf.urls import include, url
+from django.conf.urls import url
 from django.contrib import admin
 
+import views
 # Guide to django regex
 # https://github.com/codingforentrepreneurs/Guides/blob/master/all/common_url_regex.md
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^posts/', include('posts.urls')),
+    url(r'^$', views.post_home),
+    #CRUD STUFF
+    url(r'^create/$', views.post_create),
+    url(r'^remove/$', views.post_remove),
+    url(r'^update/$', views.post_update),
+    url(r'^display/$', views.post_display),
 ]
