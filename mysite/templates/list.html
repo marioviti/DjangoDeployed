@@ -1,0 +1,18 @@
+<!-- DOCTYPE html -->
+
+<html>
+
+<body>
+{% for item in queryset %}
+  <h1>
+  {{ item.title }}<br/>
+  {{ item.content }}<br/>
+  {{ item.updated }}<br/>
+  {{ item.timestamp }}<br/>
+  {{ item.id }}<br/>
+  {{ item.pk }}<br/>
+  </h1>
+{% endfor %}
+</body>
+
+</html>

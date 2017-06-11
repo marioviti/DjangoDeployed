@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 from django.http import HttpResponse
 from django.shortcuts import render
 
+from models import Post
+
 # Create your views here.
 
 def post_home(req):
@@ -21,4 +23,6 @@ def post_delete(req):
     return HttpResponse("<h1>Delete</h1>")
 
 def post_list(req):
-    return HttpResponse("<h1>List</h1>")
+    queryset = Post.objects.all()
+    context = { 'queryset' : queryset }
+    return render(req,"list.html",context)
