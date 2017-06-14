@@ -62,7 +62,15 @@ creates an app within a folder named after the app (posts).
 
 First list it under the others to the INSTALLED_APPS dictionary in ```DjangoDeployed/mysite/mysite/settings.py```
 
-## Referr to the posts app with urls and views
+## Access the posts app with urls and views
+
+Django is built as an MDV(Model View Controller) in our case these are:
+* Model: SQLite3 db (vanilla db shipped with django)
+* View: html, json, any readable format for a browser.
+* Controller: Python.
+
+The controller handles the HTTP request via urls pattern that are mapped to python functions that serve html or json as response.
+
 In ```DjangoDeployed/mysite/mysite/urls.py``` modify the urls 
 ```
 from django.conf.urls import include, url
@@ -88,7 +96,7 @@ urlpatterns = [
 ```
 This will raise an error, next define the post_home function in ```posts/views.py```
 
-##### The request response cycle.
+### The request response cycle
 
 Websites mostly work as a pull server.
 For each request a response spawns, this mechanism is implemented in practice by the http protocol.
@@ -98,7 +106,8 @@ def post_home(req):
     return HttpResponse("<h1>Hello</h1>")
 ```
 restart the server and goto <yourIP>/posts and a Hello will appear.
-### the model
+
+### The model
 
 A model is a class permitting django to create foramtted tables in the database: to create one modify posts/models.py
 and add the desired model(class->table) i.e:
@@ -154,7 +163,7 @@ For more options visit the documentation:
 [ModelAdminOptions](https://docs.djangoproject.com/en/1.11/ref/contrib/admin/#modeladmin-options)
 ### CRUD
 The Admin panel is an example of good software developement, the AdminModels follow [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete).
-##### URLS and Views
+#### URLS and Views
 Each CRUD task can be implemented within the req-resp cycle with the url-views system (actually CRUDL).
 
 in ```post/urls.py``` add the follwing patterns:
@@ -237,7 +246,7 @@ this is referenced by the root url of the posts app aka <yourIP>/posts.
 ```>>> Post.object.filter(title__icontains="hi")``` same query case insensitive.
 
 ### use DB API in the req-resp cycle
-##### context in the backend
+#### context in the backend
 Add a "context" to the request 
 ```
 from models impor Post
@@ -247,7 +256,7 @@ def post_list(req):
     return render(req,"list.html",context)
 ```
 this will raise an error upon request to the /list url because the list.html file has not been created yet.
-##### context in the frontend
+#### context in the frontend
 A queryset is an iterable object, each field is an attribute of the items:
 ```
     queryset = Post.objects.all()
@@ -285,7 +294,7 @@ Create a ```templates/list.html``` file:
 ```
 ##### commit 6d662b837589b11649affd498cb0c357a361bccd
 
-# Dynamic urls.
+## Dynamic urls
 
 Dynamic urls implement passing of argument via url.
 This is sliglty different from a post method in HTTP because an argument is passed in order to query the database with a filter option (search by title, id, content or any other field), a POST method should trigger a write or update in the database.
@@ -295,7 +304,7 @@ We'll extend the CRUD paradigm with detail: ask for a specific post via url in t
 * a view function to handle the request and fire the query and return a template page.
 * template page to be rendere by the browser.
 
-### kwargs in django regex.
+### kwargs in django regex
 
 In django urls regex are bind to view methods and typed kwargs can be passed via a specific django regex syntax.
 
@@ -306,7 +315,7 @@ url(r'^detail/(?P<pk>\d+)/$', posts_detail),
 ...
 ```
 
-### url view template.
+### url view template
 
 This must be matched with the view function
 
@@ -347,7 +356,7 @@ Finally add ```detail.html``` in the templates folder:
 ##### commit 67da321a4400d851758b294c873f5c49b11c90c2
 
 
-# Links and dynamic url.
+### Links and dynamic url
 
 We'd like to add clickable links to address the dynamic url of a post.
 
@@ -356,7 +365,7 @@ To do so we'll use 3 things:
 * comodity Post Model method get_absolute_url: each post instance will have this method.
 * reverse method: a method linking the comodity method to the name of the url.
 
-### Namespaces and names.
+#### Namespaces and names.
 
 For urls namespaces map to different names, so two urls can have the same name in different namespaces.
 
@@ -373,7 +382,7 @@ Add a name to the url pattern in ```posts/urls.py```:
     url(r'^detail/(?P<pk>\d+)/$', views.post_detail, name='post'),
 ```
 
-### Comodity method.
+#### Comodity method.
 
 Add this method to the Post class in models.py:
 ```
@@ -409,4 +418,4 @@ This method is called within the template so that a string for the url will be g
 Notice that the view has not been modified.
 So if now you change the name of the url in the regex, you do not need to change anything in the model all will be associated with the name and reverse will resolve the actual url specified in the regex.
 
-commit a6f48678a8f0b358ce68a362c04cb30bbfbebd83
+##### commit a6f48678a8f0b358ce68a362c04cb30bbfbebd83
