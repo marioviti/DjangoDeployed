@@ -219,8 +219,7 @@ in templates directory create a file ```index.html```
 </html>
 ```
 this is referenced by the root url of the posts app aka <yourIP>/posts.
-
-#### commit 66ce07f81e6d85400c90b0271351010bbf6ce58d
+##### commit 66ce07f81e6d85400c90b0271351010bbf6ce58d
 
 ## Django Shell and Database API
 [DB_API_DOC](https://docs.djangoproject.com/en/1.11/topics/db/queries/)
@@ -284,6 +283,130 @@ Create a ```templates/list.html``` file:
 
 </html>
 ```
-#### commit 6d662b837589b11649affd498cb0c357a361bccd
+##### commit 6d662b837589b11649affd498cb0c357a361bccd
+
+# Dynamic urls.
+
+Dynamic urls implement passing of argument via url.
+This is sliglty different from a post method in HTTP because an argument is passed in order to query the database with a filter option (search by title, id, content or any other field), a POST method should trigger a write or update in the database.
+
+We'll extend the CRUD paradigm with detail: ask for a specific post via url in the database and return it in the browser.
+* urls to pass the pk argumet to the view function.
+* a view function to handle the request and fire the query and return a template page.
+* template page to be rendere by the browser.
+
+### kwargs in django regex.
+
+In django urls regex are bind to view methods and typed kwargs can be passed via a specific django regex syntax.
+
+update the ```urlpatterns``` dictionary in the ```urls.py``` file.
+```
+...
+url(r'^detail/(?P<pk>\d+)/$', posts_detail),
+...
+```
+
+### url view template.
+
+This must be matched with the view function
+
+```
+from djangoshortcuts import render, get_object_or_404
+
+def posts_detail(req, pk=None):
+    query_set = get_object_or_404(Post, pk=pk)
+    context = {
+        "query_set":query_set
+    }
+    return render(request, "detail.html", context)
+```
+
+We've also introduced the get_object_or_404 method which handles the exception in case the queryset is empty and returns a http 404 page.
+
+Finally add ```detail.html``` in the templates folder:
+
+```
+<!-- DOCTYPE html -->
+
+<html>
+
+<body>
+  <h1>
+  {{ item.title }}<br/>
+  {{ item.content }}<br/>
+  {{ item.updated }}<br/>
+  {{ item.timestamp }}<br/>
+  {{ item.id }}<br/>
+  {{ item.pk }}<br/>
+  </h1>
+</body>
+
+</html>
+```
+
+##### commit 67da321a4400d851758b294c873f5c49b11c90c2
 
 
+# Links and dynamic url.
+
+We'd like to add clickable links to address the dynamic url of a post.
+
+To do so we'll use 3 things:
+* urls names and namespaces: name the url to be referred globally within the project (no hardcoding!).
+* comodity Post Model method get_absolute_url: each post instance will have this method.
+* reverse method: a method linking the comodity method to the name of the url.
+
+### Namespaces and names.
+
+For urls namespaces map to different names, so two urls can have the same name in different namespaces.
+
+Add namespace in the ```mysite/urls.py``` file in the mysite directory (the main router at the top of the project):
+
+```
+    url(r'^posts/', include('posts.urls', namespace='posts') ),
+```
+
+all the names of urls in posts.urls will belong now to the same namespace 'posts'
+Add a name to the url pattern in ```posts/urls.py```:
+
+```
+    url(r'^detail/(?P<pk>\d+)/$', views.post_detail, name='post'),
+```
+
+### Comodity method.
+
+Add this method to the Post class in models.py:
+```
+from django.core.urlresolvers import reverse
+
+Class Post(model.Model):
+...
+    def get_absolute_url(self):
+        return reverse('posts:post', kwargs={'pk':self.pk})
+```
+First parameters is the name of the urls preceded by its namespace: in our case 'posts:post', second parameters refers to the typed kwargs specified in the url regex.
+This method is called within the template so that a string for the url will be generated and passed to the <href> html tag.
+
+```
+<!-- DOCTYPE html -->
+
+<html>
+
+<body>
+  <h1>
+  <a href='{{ item.get_absolute_url }}'> {{ item.title }}</a><br/>
+  {{ item.content }}<br/>
+  {{ item.updated }}<br/>
+  {{ item.timestamp }}<br/>
+  {{ item.id }}<br/>
+  {{ item.pk }}<br/>
+  </h1>
+</body>
+
+</html>
+```
+
+Notice that the view has not been modified.
+So if now you change the name of the url in the regex, you do not need to change anything in the model all will be associated with the name and reverse will resolve the actual url specified in the regex.
+
+commit a6f48678a8f0b358ce68a362c04cb30bbfbebd83
