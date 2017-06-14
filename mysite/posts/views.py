@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from models import Post
 
@@ -24,5 +24,15 @@ def post_delete(req):
 
 def post_list(req):
     queryset = Post.objects.all()
-    context = { 'queryset' : queryset }
+    context = {
+        'queryset' : queryset
+    }
+    # rendering from template directory
     return render(req,"list.html",context)
+
+def post_detail(req, pk=None):
+    item = get_object_or_404(Post, pk=pk)
+    context = {
+        'item' : item
+    }
+    return render(req,"detail.html", context)
