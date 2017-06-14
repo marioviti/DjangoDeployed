@@ -5,7 +5,7 @@
 <body>
 {% for item in queryset %}
   <h1>
-  {{ item.title }}<br/>
+  <a href='{{ item.get_absolute_url }}'> {{ item.title }}</a><br/>
   {{ item.content }}<br/>
   {{ item.updated }}<br/>
   {{ item.timestamp }}<br/>
