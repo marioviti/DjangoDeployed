@@ -397,7 +397,7 @@ To do so we'll use 3 things:
 * comodity Post Model method get_absolute_url: each post instance will have this method.
 * reverse method: a method linking the comodity method to the name of the url.
 
-#### Namespaces and names.
+#### Namespaces and names
 
 For urls namespaces map to different names, so two urls can have the same name in different namespaces.
 
@@ -414,7 +414,7 @@ Add a name to the url pattern in ```posts/urls.py```:
     url(r'^detail/(?P<pk>\d+)/$', views.post_detail, name='post'),
 ```
 
-#### Comodity method.
+#### Comodity method
 
 Add this method to the Post class in models.py:
 ```
@@ -451,3 +451,113 @@ Notice that the view has not been modified.
 So if now you change the name of the url in the regex, you do not need to change anything in the model all will be associated with the name and reverse will resolve the actual url specified in the regex.
 
 ##### commit a6f48678a8f0b358ce68a362c04cb30bbfbebd83
+
+
+## Forms
+
+Building a form includes:
+* building the html form for http POST method.
+* validate data coming upon a request.
+* storing or perist the data sent in the database.
+* 
+Django provides ready-to-use forms class.
+This class should also be held as example for any object interacting with the MVC(Model View Controller).
+
+### Extend the ModelForm
+
+create a new file ```forms.py```
+
+```
+
+from django import forms
+from .models import Post
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = [
+            "title",
+            "content"
+        ]
+```
+
+#### the form view
+
+This wraps the input fields of the Post model into a form object.
+Now add a view function to display the form in ```views.py```
+
+```
+from .forms import PostForm
+
+def post_create(req):
+    form = PostForm()
+    context = { 'form' : form }
+    return render(req, "post_create.html", context)
+```
+
+#### the form template
+
+Create a new template file ```templates/post_create.html```
+
+```
+<!-- DOCTYPE html -->
+
+<html>
+
+<body>
+  <h1>Form</h1>
+  <form method='POST' action=''>
+  {{ form.as_p }}
+  <input type='submit' value='create post'>
+  </form>
+</body>
+
+</html>
+```
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+POST is a standard method of the HTTP protocol.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+* form.as_p is a method of the ModelForm object standing for as paragraph which generate the html to render the post input fields.
+* <form> html tag stands for post object: <input> is the child of form that includes a button at the bottom.
+* the default method for a post is GET which is usually changed to POST as the data inserted will be sent to a url specified in action to the server via HTTP request, leaving action empty will reuse the current url to send data to.
+
+### CSRF cross site request forgery
+Post methods are insicure as any website could forge a url and send a POST request via Http client.
+A basic DOS attack strategy is to siege both web server and database by spawning POST requests, filling the disk quota and making the website unreachable.
+
+Luckly enough Django provides default security measures easy to implement.
+
+```
+<!-- DOCTYPE html -->
+
+<html>
+
+<body>
+  <h1>Form</h1>
+  <form method='POST' action=''>{% csrf_token %}
+  {{ form.as_p }}
+  <input type='submit' value='create post'>
+  </form>
+</body>
+
+</html>
+```
+
+#### Validating input data
+Some field have constraints on them, to secure consistency of data before storing data in the database we'll need to check for validation (for example the title filed has a max lenght). Django provides simple method for data validation.
+
+In the ```views.py``` file:
+
+```
+def post_create(req):
+    form = PostForm(req.POST or None)
+    if form.is_valid():
+        instance = form.save(commit=False)
+        instance.save()
+    ...
+```
+
+This is very handy but there's a lot going on.
+* ```req.POST```: the http request has a field for the method input data POST this will be passed to the PostForm Object to initialize the form with the input data.
+* A ```None``` initialized ```PostForm``` will be invalid, remeber we use this view for both storing data and showing the post, is_valid() will be true only upon a POST request coming from a client.
+* ```commit=False``` databases have caches to temporary store data, commit means storing from the cache to the database, not commiting will leave the database manager deciding when to store so that the use of a cache minimizes accesses to database (J2LUK).
