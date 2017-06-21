@@ -561,3 +561,53 @@ This is very handy but there's a lot going on.
 * ```req.POST```: the http request has a field for the method input data POST this will be passed to the PostForm Object to initialize the form with the input data.
 * A ```None``` initialized ```PostForm``` will be invalid, remeber we use this view for both storing data and showing the post, is_valid() will be true only upon a POST request coming from a client.
 * ```commit=False``` databases have caches to temporary store data, commit means storing from the cache to the database, not commiting will leave the database manager deciding when to store so that the use of a cache minimizes accesses to database (J2LUK).
+
+## How to modify posts
+
+We'll need to show the content in a form and modify the correct instance instead of adding new instances.
+To do so we need to keep track of the post id.
+
+In ```views.py```
+
+```
+def post_update(req, id=None):
+	instance = get_object_or_404(Post,id=id)
+	form = PostForm(request.POST or None)
+	if form.is_valid():
+		instance=form.save(commit=False)
+		instance.save()
+	context = {
+		'title': instance.title,
+		'instance':instance,
+		'form':form
+	}
+	return render(req, "post_form.html", context)
+	
+```
+
+We've set the function in the view but we need an url to point to the view itself.
+
+In ```urls.py```:
+
+```
+urlpatterns= {
+	...
+	url(r'^(?P<id>\d+)/edit/$', post_update, name='update',
+	...
+}
+```
+
+To add a better feel to the website we'll modify the view to redirect us to the detail page of the created/updated post.
+
+In ```views.py```
+```
+from django.http import HttpResponseRedirect
+
+def post_update(req,id=None):
+	...
+	instance.save()
+	return HttpResponseRedirect(instance.get_absolute_url())
+	...
+```
+
+Same for the create view, this will have the same effect of clicking on the link in the post list.
