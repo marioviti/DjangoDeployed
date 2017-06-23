@@ -3,6 +3,15 @@
 <html>
 
 <body>
+  
+{% if messages %}
+<ul class="messages">
+	{% for message in messages %}
+		<li>{{message}}</li>
+	{% endfor %}
+</ul>
+{% endif %}
+
 {% for item in queryset %}
   <h1>
   <a href='{{ item.get_absolute_url }}'> {{ item.title }}</a><br/>

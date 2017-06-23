@@ -1,38 +1,68 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.contrib import messages
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404, redirect
 
-from models import Post
+from .models import Post
+from .forms import PostForm
 
 # Create your views here.
 
-def post_home(req):
-    return render(req,"index.html",{})
-
 def post_create(req):
-    return HttpResponse("<h1>Create</h1>")
+    form = PostForm(req.POST or None)
+    if form.is_valid():
+        instance = form.save(commit=False)
+        instance.save()
+        messages.success(req, "Successfully created")
+        return HttpResponseRedirect(instance.get_absolute_url())
+    else:
+        messages.error(req, "Error upon create")
+    context = {
+        'form':form
+    }
+    return render(req, "form.html", context)
 
-def post_read(req):
-    return HttpResponse("<h1>Read</h1>")
+def post_update(req, pk=None):
+    instance = get_object_or_404(Post, id=pk)
+    form = PostForm(req.POST or None, instance=instance)
+    if form.is_valid():
+        instance = form.save(commit=False)
+        instance.save()
+        messages.success(req, "Successfully updated")
+        return HttpResponseRedirect(instance.get_absolute_url())
+    else:
+        messages.error(req, "Error upon update")
+    context = {
+        'title':instance.title,
+        'instance':instance,
+        'form':form
+    }
+    return render(req, "form.html", context)
 
-def post_update(req):
-    return HttpResponse("<h1>Update</h1>")
+def post_delete(req, pk=None):
+    instance = get_object_or_404(Post, id=pk)
+    instance.delete()
+    messages.success(req, "Successfully deleted")
+    return redirect('posts:list')
 
-def post_delete(req):
-    return HttpResponse("<h1>Delete</h1>")
 
 def post_list(req):
     queryset = Post.objects.all()
     context = {
-        'queryset' : queryset
+        'queryset':queryset
     }
-    # rendering from template directory
-    return render(req,"list.html",context)
+    return render(req, "list.html",context)
 
 def post_detail(req, pk=None):
     item = get_object_or_404(Post, pk=pk)
     context = {
-        'item' : item
+        'item':item
     }
-    return render(req,"detail.html", context)
+    return render(req, "detail.html", context)
+
+def post_home(req):
+    return render(req,"index.html",{})
+
+def post_read(req):
+    return HttpResponse("<h1>Read</h1>")
