@@ -1,12 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>
-  {{ item.title }}<br/>
-  {{ item.content }}<br/>
-  {{ item.updated }}<br/>
-  {{ item.timestamp }}<br/>
-  {{ item.id }}<br/>
-  {{ item.pk }}<br/>
-  </h1>
+<div class="blog-post">
+	<h2 class="blog-post-title"> {{ item.title }} </h2>
+	<p class="blog-post-meta"> {{ item.timestamp|timesince }} </p>
+  	{{ item.content|linebreaks }}
+</div>
 {% endblock content %}
