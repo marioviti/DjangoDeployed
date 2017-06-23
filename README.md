@@ -691,6 +691,24 @@ Update the template to display messages, edit ```detail.html```:
 {% endif %}
 ```
 
+## Manage Static
+
+Because of the NGINX settings we've already our server serving static files in ```/media/```
+To make django point to the same directory for static files we'll have to change variables in  ```mysite/settings.py```:
+
+
+```
+STATIC_URL='/media/'
+STATIC_ROOT=os.path.join(BASE_DIR, 'media/')
+```
+
+now to test this modify the base template ```base.html```
+
+```
+  {% load static %}
+	<img src="{% static "gatto.jpeg" %} " alt="gatto" height="42" width="42" />
+```
+
 
 
 
