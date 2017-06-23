@@ -3,6 +3,8 @@
 <html>
 <body>
 
+  {% load static %}
+	<img src="{% static "gatto.jpeg" %} " alt="gatto" height="42" width="42" />
   {% if messages %}
   <div class="messages">
     <ul class="messages">
@@ -25,7 +27,7 @@
         {{ item.pk }}<br/>
         </h1>
       {% endfor %}
-    {% endblock content %}%}
+    {% endblock content %}
   </div>
 </body>
 </html>
