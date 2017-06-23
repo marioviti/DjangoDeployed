@@ -1,35 +1,3 @@
-**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
-
-- [DjangoDeployed](#)
-	- [structure](#)
-	- [to start](#)
-	- [Troubleshooting](#)
-- [Developing](#)
-	- [create an app and first model](#)
-	- [Access the posts app with urls and views](#)
-		- [The request response cycle](#)
-		- [The model](#)
-	- [Custom admin and CRUD](#)
-		- [CRUD](#)
-			- [URLS and Views](#)
-	- [Templates](#)
-		- [HTML Hello World: the index.html template](#)
-				- [commit 66ce07f81e6d85400c90b0271351010bbf6ce58d](#)
-	- [Django Shell and Database API](#)
-			- [Cheat list for using the DB API](#)
-		- [use DB API in the req-resp cycle](#)
-			- [context in the backend](#)
-			- [context in the frontend](#)
-				- [commit 6d662b837589b11649affd498cb0c357a361bccd](#)
-	- [Dynamic urls](#)
-		- [kwargs in django regex](#)
-		- [url view template](#)
-				- [commit 67da321a4400d851758b294c873f5c49b11c90c2](#)
-		- [Links and dynamic url](#)
-			- [Namespaces and names.](#)
-			- [Comodity method.](#)
-				- [commit a6f48678a8f0b358ce68a362c04cb30bbfbebd83](#)
-
 # DjangoDeployed
 
 Django (1.11) app with settings for deployements (python 2.7) on server with UWSGI and NGINX.
@@ -562,7 +530,7 @@ This is very handy but there's a lot going on.
 * A ```None``` initialized ```PostForm``` will be invalid, remeber we use this view for both storing data and showing the post, is_valid() will be true only upon a POST request coming from a client.
 * ```commit=False``` databases have caches to temporary store data, commit means storing from the cache to the database, not commiting will leave the database manager deciding when to store so that the use of a cache minimizes accesses to database (J2LUK).
 
-## How to modify posts
+## How to modify posts (crUd)
 
 We'll need to show the content in a form and modify the correct instance instead of adding new instances.
 To do so we need to keep track of the post id.
