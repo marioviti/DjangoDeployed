@@ -572,7 +572,7 @@ In ```views.py```
 ```
 def post_update(req, id=None):
 	instance = get_object_or_404(Post,id=id)
-	form = PostForm(request.POST or None)
+	form = PostForm(request.POST or None, instance=instance)
 	if form.is_valid():
 		instance=form.save(commit=False)
 		instance.save()
@@ -584,7 +584,7 @@ def post_update(req, id=None):
 	return render(req, "post_form.html", context)
 	
 ```
-
+Notice we're passing instance to the PostForm constructor to initialize the values title and content.
 We've set the function in the view but we need an url to point to the view itself.
 
 In ```urls.py```:
@@ -611,3 +611,77 @@ def post_update(req,id=None):
 ```
 
 Same for the create view, this will have the same effect of clicking on the link in the post list.
+
+## Delete a POST (cruD)
+
+edit ```views.py```:
+
+```
+...
+from django.shortcuts import redirect
+...
+def post_delete(req.pk=None):
+    instance=get_object_or_404(Post, id=pk)
+    instance.delete()
+    return redirect('posts:list')
+```
+
+Update the names in the ``urls.py```
+```
+urlpatterns = {
+	...
+	url(r'^list/$', views.post_list, name='list'),
+	url(r'^delete/(?P<pk>\d+)/$$', views.post_delete),
+	...
+```
+
+## Messagges
+
+https://docs.djangoproject.com/en/1.9/ref/contrib/messages/
+
+Show a message after update/create of post, edit ```views.py```:
+
+```
+from django.contrib import messages
+
+...
+def post_create(req):
+	...
+	instance.save()
+	messages.success(req, "successfully created")
+else:
+	messages.error(req, "unsuccessfully created")
+...
+def post_update(req):
+	...
+	instance.save()
+	messages.success(req, "successfully updated")
+else:
+	messages.error(req, "unsuccessfully updated")
+	...
+	
+def post_delete(req.pk=None):
+	...
+	instance.delete()
+	messages.succes(req, "Successfully deleted")
+	...
+```
+
+Update the template to display messages, edit ```detail.html```:
+
+```
+...
+<body>
+{% if messages %}
+<ul class="messages">
+	{% for message in messages %}
+		<li>{{message}}</li>
+	{% endfor %}
+</ul>
+
+{% endif %}
+```
+
+
+
+
