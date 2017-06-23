@@ -1,0 +1,31 @@
+<!-- DOCTYPE html -->
+
+<html>
+<body>
+
+  {% if messages %}
+  <div class="messages">
+    <ul class="messages">
+      {% for message in messages %}
+        <li>{{message}}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <div class="container">
+    {% block content %}
+      {% for item in queryset %}
+        <h1>
+        <a href='{{ item.get_absolute_url }}'> {{ item.title }}</a><br/>
+        {{ item.content }}<br/>
+        {{ item.updated }}<br/>
+        {{ item.timestamp }}<br/>
+        {{ item.id }}<br/>
+        {{ item.pk }}<br/>
+        </h1>
+      {% endfor %}
+    {% endblock content %}%}
+  </div>
+</body>
+</html>

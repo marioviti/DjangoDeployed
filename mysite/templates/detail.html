@@ -1,16 +1,6 @@
-<!-- DOCTYPE html -->
+{% extends "base.html" %}
 
-<html>
-
-<body>
-{% if messages %}
-<ul class="messages">
-	{% for message in messages %}
-		<li>{{message}}</li>
-	{% endfor %}
-</ul>
-{% endif %}
-
+{% block content %}
   <h1>
   {{ item.title }}<br/>
   {{ item.content }}<br/>
@@ -19,6 +9,4 @@
   {{ item.id }}<br/>
   {{ item.pk }}<br/>
   </h1>
-</body>
-
-</html>
+{% endblock content %}

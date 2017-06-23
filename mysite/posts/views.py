@@ -52,7 +52,7 @@ def post_list(req):
     context = {
         'queryset':queryset
     }
-    return render(req, "list.html",context)
+    return render(req, "base.html", context)
 
 def post_detail(req, pk=None):
     item = get_object_or_404(Post, pk=pk)
