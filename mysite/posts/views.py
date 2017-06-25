@@ -62,7 +62,11 @@ def post_detail(req, pk=None):
     return render(req, "detail.html", context)
 
 def post_home(req):
-    return render(req,"index.html",{})
+    queryset = Post.objects.all()
+    context = {
+        'queryset':queryset
+    }
+    return render(req, "index.html", context)
 
 def post_read(req):
     return HttpResponse("<h1>Read</h1>")
