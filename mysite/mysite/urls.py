@@ -16,11 +16,25 @@ Including another URLconf
 
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.shortcuts import render
 
 # Guide to django regex
 # https://github.com/codingforentrepreneurs/Guides/blob/master/all/common_url_regex.md
 
+
+def contacts_page(req):
+    page_title = 'contacts'
+    context = {'page_title':page_title}
+    return render(req, "contacts.html", context)
+
+def about_page(req):
+    page_title = 'about'
+    context = {'page_title':page_title}
+    return render(req, "about.html", context)
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^about/', about_page),
+    url(r'^contacts/', contacts_page),
     url(r'^posts/', include('posts.urls', namespace='posts')),
 ]

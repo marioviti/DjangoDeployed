@@ -48,8 +48,10 @@ def post_delete(req, pk=None):
 
 
 def post_list(req):
+    page_title = 'articoli'
     queryset = Post.objects.all()
     context = {
+        'page_title':page_title,
         'queryset':queryset
     }
     return render(req, "base.html", context)
