@@ -1,43 +1,109 @@
 <!-- DOCTYPE html -->
-
 <html>
+{% load static %}
+
 <head>
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
   <!-- Optional theme -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+  <!-- Custom styles for this template -->
+  <link href="{% static "Carousel Template for Bootstrap_files/carousel.css" %} " rel="stylesheet">
 </head>
+
 <body>
+  <!-- NAVBAR -->
+  <div class="navbar-wrapper">
+    <div class="container">
 
-  {% load static %}
-	<img src="{% static "gatto.jpeg" %} " alt="gatto" height="42" width="42" />
-  {% if messages %}
-  <div class="messages">
-    <ul class="messages">
-      {% for message in messages %}
-        <li>{{message}}</li>
-      {% endfor %}
-    </ul>
+      <nav class="navbar navbar-inverse navbar-static-top">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://getbootstrap.com/examples/carousel/#">Project name</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li class="active"><a href="http://getbootstrap.com/examples/carousel/#">Home</a></li>
+              <li><a href="http://getbootstrap.com/examples/carousel/#about">About</a></li>
+              <li><a href="http://getbootstrap.com/examples/carousel/#contact">Contact</a></li>
+              <li class="dropdown">
+                <a href="http://getbootstrap.com/examples/carousel/#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="http://getbootstrap.com/examples/carousel/#">Action</a></li>
+                  <li><a href="http://getbootstrap.com/examples/carousel/#">Another action</a></li>
+                  <li><a href="http://getbootstrap.com/examples/carousel/#">Something else here</a></li>
+                  <li role="separator" class="divider"></li>
+                  <li class="dropdown-header">Nav header</li>
+                  <li><a href="http://getbootstrap.com/examples/carousel/#">Separated link</a></li>
+                  <li><a href="http://getbootstrap.com/examples/carousel/#">One more separated link</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
   </div>
-  {% endif %}
+  <!-- -->
 
-  <div class="container">
-    {% block content %}
-      {% for item in queryset %}
-        <h1>
-        <a href='{{ item.get_absolute_url }}'> {{ item.title }}</a><br/>
-        {{ item.content }}<br/>
-        {{ item.updated }}<br/>
-        {{ item.timestamp }}<br/>
-        {{ item.id }}<br/>
-        {{ item.pk }}<br/>
-        </h1>
-      {% endfor %}
-    {% endblock content %}
+  <div class="container marketing">
+    <hr class="featurette-divider">
+  	<img src="{% static "gatto.jpeg" %} " alt="gatto" height="42" width="42" />
+    {% if messages %}
+    <div class="messages">
+      <ul class="messages">
+        {% for message in messages %}
+          <li>{{message}}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    <!-- Post Container List -->
+    <div class="container">
+      {% block content %}
+        {% for item in queryset %}
+          <!-- Post featurettes -->
+          <hr class="featurette-divider">
+          <div class="row featurette">
+            <div class="col-md-7">
+              <h2 class="featurette-heading"><a href='{{ item.get_absolute_url }}'> {{ item.title }} </a><span class="text-muted">{{ item.timestamp|timesince }} ago</span></h2>
+              <p class="lead">{{ item.content }}</p>
+            </div>
+            <div class="col-md-5">
+              <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="500x500" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNTAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDUwMCA1MDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzUwMHg1MDAvYXV0bwpDcmVhdGVkIHdpdGggSG9sZGVyLmpzIDIuNi4wLgpMZWFybiBtb3JlIGF0IGh0dHA6Ly9ob2xkZXJqcy5jb20KKGMpIDIwMTItMjAxNSBJdmFuIE1hbG9waW5za3kgLSBodHRwOi8vaW1za3kuY28KLS0+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48IVtDREFUQVsjaG9sZGVyXzE1Y2RiMzFhNmViIHRleHQgeyBmaWxsOiNBQUFBQUE7Zm9udC13ZWlnaHQ6Ym9sZDtmb250LWZhbWlseTpBcmlhbCwgSGVsdmV0aWNhLCBPcGVuIFNhbnMsIHNhbnMtc2VyaWYsIG1vbm9zcGFjZTtmb250LXNpemU6MjVwdCB9IF1dPjwvc3R5bGU+PC9kZWZzPjxnIGlkPSJob2xkZXJfMTVjZGIzMWE2ZWIiPjxyZWN0IHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIiBmaWxsPSIjRUVFRUVFIi8+PGc+PHRleHQgeD0iMTg1Ljc2NTYyNSIgeT0iMjYxLjAyNSI+NTAweDUwMDwvdGV4dD48L2c+PC9nPjwvc3ZnPg==" data-holder-rendered="true">
+            </div>
+          </div>
+          <!-- -->
+        {% endfor %}
+      {% endblock content %}
+    </div>
+    <!-- -->
+
+    <!-- FOOTER -->
+    <footer>
+      <p class="pull-right"><a href="http://getbootstrap.com/examples/carousel/#">Back to top</a></p>
+      <p>© 2016 Company, Inc. · <a href="http://getbootstrap.com/examples/carousel/#">Privacy</a> · <a href="http://getbootstrap.com/examples/carousel/#">Terms</a></p>
+    </footer>
+    <!--  -->
   </div>
 
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script type="text/javascript" src="{% static "Carousel Template for Bootstrap_files/holder.min.js" %} "></script>
 
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500" preserveAspectRatio="none" style="display: none; visibility: hidden; position: absolute; top: -100%; left: -100%;"><defs><style type="text/css"></style></defs><text x="0" y="25" style="font-weight:bold;font-size:25pt;font-family:Arial, Helvetica, Open Sans, sans-serif">500x500</text></svg>
 </body>
 </html>
