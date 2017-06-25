@@ -709,6 +709,59 @@ now to test this modify the base template ```base.html```
 	<img src="{% static "gatto.jpeg" %} " alt="gatto" height="42" width="42" />
 ```
 
+now run ```python manage.py collectstatic``` to copy from /static/ to /media/.
+
+## Adding Bootstrap with CDN
+
+http://getbootstrap.com/getting-started/
+
+To use bootstrap for all pages simply reference it from the ```base.html``` template.
+
+```
+<!-- DOCTYPE html -->
+
+<html>
+<head>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+</head>
+<body>
+
+  {% load static %}
+	<img src="{% static "gatto.jpeg" %} " alt="gatto" height="42" width="42" />
+  {% if messages %}
+  <div class="messages">
+    <ul class="messages">
+      {% for message in messages %}
+        <li>{{message}}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <div class="container">
+    {% block content %}
+      {% for item in queryset %}
+        <h1>
+        <a href='{{ item.get_absolute_url }}'> {{ item.title }}</a><br/>
+        {{ item.content }}<br/>
+        {{ item.updated }}<br/>
+        {{ item.timestamp }}<br/>
+        {{ item.id }}<br/>
+        {{ item.pk }}<br/>
+        </h1>
+      {% endfor %}
+    {% endblock content %}
+  </div>
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+</body>
+</html>
+```
 
 
 
