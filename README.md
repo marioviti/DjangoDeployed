@@ -763,5 +763,97 @@ To use bootstrap for all pages simply reference it from the ```base.html``` temp
 </html>
 ```
 
+##Pagination
+
+To inverse the order in queries, in ```views.py```
+```
+def post_list(req):
+	queryset = Post.objects.all().order_by("-timestamp")
+```
+
+This is pretty dumb as records are reordered everytime, instead modify the model.
+
+```
+
+class Post(models.Model):
+	...
+	class Meta:
+		ordering = ["-timestamp","-updated"]
+		
+```
+
+## Django Paginator
+
+[1.9 Paginator](https://docs.djangoproject.com/en/1.9/topics/pagination/#using-paginator-in-a-view)
+
+The example from the page:
+```
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import render
+
+def listing(request):
+    contact_list = Contacts.objects.all()
+    paginator = Paginator(contact_list, 25) # Show 25 contacts per page
+
+    page = request.GET.get('page')
+    try:
+        contacts = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        contacts = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        contacts = paginator.page(paginator.num_pages)
+
+    return render(request, 'list.html', {'contacts': contacts})
+```
+
+We'll merge this code in the post_list view:
+
+```
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+...
+
+def post_list(req):
+    page_title = 'articoli'
+    queryset_list = Post.objects.all()#.order_by("-timestamp")
+    paginator = Paginator(contact_list, 25) # Show 25 contacts per page
+    page = request.GET.get('page')
+    try:
+        queryset = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        queryset = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        queryset = paginator.page(paginator.num_pages)
+    context = {
+        'page_title':page_title,
+        'queryset':queryset
+    }
+    return render(req, "list.html", context)
+```
+
+Now integrate in html the pagination by mergin from the example at the doc page as follwowing:
+
+```
+<div class="pagination">
+    <span class="step-links">
+        {% if queryset.has_previous %}
+            <a href="?page={{ queryset.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ queryset.number }} of {{ queryset.paginator.num_pages }}.
+        </span>
+
+        {% if queryset.has_next %}
+            <a href="?page={{ queryset.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
+```
+
+
 
 
