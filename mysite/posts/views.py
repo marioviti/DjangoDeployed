@@ -54,7 +54,7 @@ def post_list(req):
         'page_title':page_title,
         'queryset':queryset
     }
-    return render(req, "base.html", context)
+    return render(req, "list.html", context)
 
 def post_detail(req, pk=None):
     item = get_object_or_404(Post, pk=pk)

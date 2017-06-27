@@ -1,9 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="blog-post">
-	<h2 class="blog-post-title"> {{ item.title }} </h2>
-	<p class="blog-post-meta"> {{ item.timestamp|timesince }} </p>
-  	{{ item.content|linebreaks }}
+<hr class="featurette-divider">
+<div class="row featurette">
+	<div class="col-md-10">
+		<h1 class="featurette-heading">{{ item.title }}
+			<span class="text-muted">{{ item.timestamp|timesince }} ago</span>
+		</h1>
+		<p class="lead">{{ item.content|linebreaks }}</p>
+	</div>
+
 </div>
 {% endblock content %}
