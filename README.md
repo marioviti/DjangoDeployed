@@ -333,7 +333,7 @@ Create a ```templates/list.html``` file:
 
 </html>
 ```
-##### commit 6d662b837589b11649affd498cb0c357a361bccd
+commit 6d662b837589b11649affd498cb0c357a361bccd
 
 ## Dynamic urls
 
@@ -394,7 +394,7 @@ Finally add ```detail.html``` in the templates folder:
 </html>
 ```
 
-##### commit 67da321a4400d851758b294c873f5c49b11c90c2
+commit 67da321a4400d851758b294c873f5c49b11c90c2
 
 
 ### Links and dynamic url
@@ -459,7 +459,7 @@ This method is called within the template so that a string for the url will be g
 Notice that the view has not been modified.
 So if now you change the name of the url in the regex, you do not need to change anything in the model all will be associated with the name and reverse will resolve the actual url specified in the regex.
 
-##### commit a6f48678a8f0b358ce68a362c04cb30bbfbebd83
+commit a6f48678a8f0b358ce68a362c04cb30bbfbebd83.
 
 
 ## Forms
@@ -1022,7 +1022,7 @@ now run
 	* follow instruction to create the superuser again.
 
 
-
+commit 78fa32f42ab6c3df70a42d2471525d779a68bfdd.
 
 
 
