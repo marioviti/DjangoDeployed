@@ -9,7 +9,7 @@ import os
 # Create your models here.
 
 def upload_location(instance, filename):
-    return "%s/%s" % (instance.id, filename)
+    return os.path.join('posts', instance.slug, filename)
 
 class Post(models.Model):
     title = models.CharField(max_length=120)
@@ -46,7 +46,7 @@ def create_slug(instance, new_slug=None):
     qs = Post.objects.filter(slug=slug)
     exists = qs.exists()
     if exists:
-        new_slug = "%s-%s" % (slug, qs.first().id)
+        new_slug = "%s-%s" % (slug, qs.first().pk)
         return create_slug(instance, new_slug)
     return slug
 
