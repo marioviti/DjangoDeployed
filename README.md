@@ -879,6 +879,8 @@ Check the doc for clarification on the use of upload_to and the width and hieght
 [ImageField doc](https://docs.djangoproject.com/en/1.9/ref/models/fields/#django.db.models.ImageField)
 [FileField doc](https://docs.djangoproject.com/en/1.9/ref/models/fields/#django.db.models.FileField)
 
+I'll propose another version of the upload_location function after the next session on slugs.
+
 ### Link all together
 
 In ```post.py``` add the image field name to the fields:
@@ -997,6 +999,17 @@ Update the ```post/ursl.py``` regex to accept strings:
 Update the ```post/views.py``` detail function to search by slug:
 ```
 	item = get_object_or_404(Post, slug=slug)
+```
+
+## Use the slug as a directory name for storing images.
+
+I'd suggest to use the slug for creating descriptive names of directories for images uploaded.
+
+Modify the ```models.py``` as such:
+
+```
+def upload_location(instance, filename):
+    return os.path.join('posts', instance.slug, filename)
 ```
 
 ### Recreate database and superuser
