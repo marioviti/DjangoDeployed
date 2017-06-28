@@ -11,7 +11,7 @@ from .forms import PostForm
 # Create your views here.
 
 def post_create(req):
-    form = PostForm(req.POST or None)
+    form = PostForm(req.POST or None, req.FILES or None)
     if form.is_valid():
         instance = form.save(commit=False)
         instance.save()
@@ -26,7 +26,7 @@ def post_create(req):
 
 def post_update(req, pk=None):
     instance = get_object_or_404(Post, id=pk)
-    form = PostForm(req.POST or None, instance=instance)
+    form = PostForm(req.POST or None, req.FILES or None, instance=instance)
     if form.is_valid():
         instance = form.save(commit=False)
         instance.save()
@@ -64,8 +64,8 @@ def post_list(req):
     }
     return render(req, "list.html", context)
 
-def post_detail(req, pk=None):
-    item = get_object_or_404(Post, pk=pk)
+def post_detail(req, slug=None):
+    item = get_object_or_404(Post, slug=slug)
     context = {
         'item':item
     }

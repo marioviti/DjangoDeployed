@@ -6,6 +6,9 @@
 		<h1 class="featurette-heading">{{ item.title }}
 			<span class="text-muted">{{ item.timestamp|timesince }} ago</span>
 		</h1>
+		{% if item.image %}
+			<img src='{{ item.image.url }}' class='img-responsive' />
+		{% endif %}
 		<p class="lead">{{ item.content|linebreaks }}</p>
 	</div>
 
