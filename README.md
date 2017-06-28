@@ -854,6 +854,162 @@ Now integrate in html the pagination by mergin from the example at the doc page 
 </div>
 ```
 
+## Use images in posts
+
+In order to add an image to the post we'll modify the model.
+The model is not 1:1 to the db so the image will not be saved as a blob in the database but the ORM will map all the parts of a post to the same id, useful.
+
+### ImageField
+
+In ```models.py``` define the upload_location function and add a field to the post model:
+
+```
+def upload_location(instance, filename):
+    return "%s/%s" % (instance.id, filename)
+    
+...
+    image = models.ImageField(upload_to=upload_location, null=True, blank=True,
+        width_field="width_field",
+        height_field="height_field")
+    width_field = models.IntegerField(default=0)
+    height_field = models.IntegerField(default=0)
+    ...
+```
+Check the doc for clarification on the use of upload_to and the width and hieght fields.
+[ImageField doc](https://docs.djangoproject.com/en/1.9/ref/models/fields/#django.db.models.ImageField)
+[FileField doc](https://docs.djangoproject.com/en/1.9/ref/models/fields/#django.db.models.FileField)
+
+### Link all together
+
+In ```post.py``` add the image field name to the fields:
+
+```
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['title','content','image']
+```
+
+In ```templates/form.html``` add attribute to send data ```enctype="multipart/form-data">```:
+
+```
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Form</h1>
+<form method="post" action="" enctype="multipart/form-data">{% csrf_token %}
+  {{ form.as_p }}
+  <input type="submit" value="Create Post" />
+</form>
+
+{% endblock content %}
+
+```
+
+Now the model is updated, the postForm object is updated, the html is updated.
+In the ```views.py``` bot in create and update function:
+
+```
+form = PostForm(req.POST or None, req.FILES or None, instance=instance)
+```
+
+## SLUG
+
+A slug is a string with no whitespaces linebreaks punctuation and tabs.
+It is used in urls to have more descriptive links to share.
+
+At the end of this section you'll have something like ``` /posts/detail/title-of-post``` pointing to the post content.
+
+### Delete the database
+
+As we're adding a unique attribute we'll have to delete all the database: sorry.
+
+delete the following files:
+* db.sqlite3
+* migrations/* but the ```__init__.py``` file.
+
+run ``` pyhton manage.py flush``` and type yes.
+
+### Add slug field
+
+Add this field to the Post in ```models.py```:
+
+```
+    slug = models.SlugField(unique=True)
+```
+
+### SIGNALS
+
+Signals are like triggers in sql they fire upon a certain action. for example we want to create a unique slug but also descriptive from the uploaded content [signals](https://docs.djangoproject.com/en/1.9/ref/signals/#django.db.models.signals.pre_save).
+
+in ```models.py```:
+
+```
+...
+from django.db.models.signals import pre_save
+from django.utils.text import slugify
+
+....
+def create_slug(instance, new_slug=None):
+    slug=slugify(instance.title)
+    if new_slug is not None:
+        slug = new_slug
+    qs = Post.objects.filter(slug=slug)
+    exists = qs.exists()
+    if exists:
+        new_slug = "%s-%s" % (slug, qs.first().id)
+        return create_slug(instance, new_slug)
+    return slug
+
+def pre_save_post_reveiver(sender, instance, *args, **kwargs):
+    if not instance.slug:
+        instance.slug = create_slug(instance)
+
+pre_save.connect(pre_save_post_reveiver, sender=Post)
+```
+
+Last line: we're connecting a custom function to an event
+Unfortunately post refers to our posted content but it also means after... so the naming is not exactly happy but it works.
+
+Previous functions create a string from the slugification of the title (aka slugify:" this is a title" -> "this-is-a-title") and recursively joining the id to the slug if it's not unique.
+
+### Use slug as Link
+
+We're quite there, we've created a unique prhase which is somewhat descriptive and we'd like to use it as a url.
+
+in ```models.py``` modify the absolute_url function:
+
+```
+    ...
+    def get_absolute_url(self):
+        return reverse('posts:post', kwargs={'slug':self.slug})
+    ...
+```
+
+This will break all urls and views :) but it will be somewhat worthit :)
+
+Update the ```post/ursl.py``` regex to accept strings:
+```
+    url(r'^detail/(?P<slug>.+)/$', views.post_detail, name='post'),
+```
+
+Update the ```post/views.py``` detail function to search by slug:
+```
+	item = get_object_or_404(Post, slug=slug)
+```
+
+### Recreate database and superuser
+
+now run
+
+* ```pyhton manage.py makemigrations```
+* ```python managa.py migrate```
+* ```python manage.py createsuperuser```
+	* follow instruction to create the superuser again.
+
+
+
 
 
 
