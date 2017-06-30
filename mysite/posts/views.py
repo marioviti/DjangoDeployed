@@ -7,8 +7,23 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from .models import Post
 from .forms import PostForm
+from .forms import ArticleForm
 
 # Create your views here.
+
+def post_create_article(req):
+    form = ArticleForm(req.POST or None, req.FILES or None)
+    if form.is_valid():
+        instance = form.save(commit=False)
+        instance.save()
+        messages.success(req, "Successfully created")
+        return HttpResponseRedirect(instance.get_absolute_url())
+    else:
+        messages.error(req, "Error upon create")
+    context = {
+        'form':form
+    }
+    return render(req, "form.html", context)
 
 def post_create(req):
     form = PostForm(req.POST or None, req.FILES or None)
@@ -72,8 +87,18 @@ def post_detail(req, slug=None):
     return render(req, "detail.html", context)
 
 def post_home(req):
-    queryset = Post.objects.all()
+    page_title = 'home'
+    queryset_list = Post.objects.all()#.order_by("-timestamp")
+    paginator = Paginator(queryset_list, 5)
+    page = req.GET.get('page')
+    try:
+        queryset = paginator.page(page)
+    except PageNotAnInteger:
+        queryset = paginator.page(1)
+    except EmptyPage:
+        queryset = paginator.page(1)
     context = {
+        'page_title':page_title,
         'queryset':queryset
     }
     return render(req, "index.html", context)

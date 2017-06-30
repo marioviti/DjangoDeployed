@@ -21,6 +21,10 @@ from django.shortcuts import render
 # Guide to django regex
 # https://github.com/codingforentrepreneurs/Guides/blob/master/all/common_url_regex.md
 
+def notebook(req):
+    page_title = 'notebook'
+    context = {'page_title':page_title}
+    return render(req, "articoli/discesa_gradiente.html", context)
 
 def contacts_page(req):
     page_title = 'contacts'
@@ -36,5 +40,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^about/', about_page),
     url(r'^contacts/', contacts_page),
+    url(r'^notebook/', notebook),
     url(r'^posts/', include('posts.urls', namespace='posts')),
 ]

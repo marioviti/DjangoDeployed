@@ -23,10 +23,12 @@ import views
 urlpatterns = [
     url(r'^$', views.post_home),
     #CRUD STUFF
+    url(r'^create-article/$', views.post_create_article),
     url(r'^create/$', views.post_create),
     url(r'^read/$', views.post_read),
     url(r'^list/$', views.post_list, name='list'),
     url(r'^delete/(?P<pk>\d+)/$', views.post_delete),
+    url(r'^article/(?P<slug>.+)/$', views.post_detail, name='article'),
     url(r'^detail/(?P<slug>.+)/$', views.post_detail, name='post'),
     url(r'^update/(?P<pk>\d+)/$', views.post_update, name='update'),
 
